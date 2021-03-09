@@ -1,11 +1,23 @@
 # This file is app/controllers/movies_controller.rb
 class MoviesController < ApplicationController
   def index
+    if params[:ratings]!= nil
+    parametro_rating= params[:ratings].keys
+    clausula="\"#{parametro_rating[0]}\"=rating"
+    parametro_rating.each do |a|clausula=clausula+" or \"#{a}\"=rating"end
+    @movies = Movie.where(clausula)
+  else
     @movies = Movie.all
+  end
+    if params[:sort_by]!= nil
+      parametro_sort= params[:sort_by]
+      @movies = @movies.sort_by {|m| m[:"#{parametro_sort}"]}
+    end
   end
 
   def show
     id = params[:id]
+    teste= params
     @movie = Movie.find(id)
   end
 
@@ -43,5 +55,8 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "#{@movie.title} was deleted!"
     redirect_to movies_path
+  end
+  def @all_ratings.each(&block)
+    Movie.all_ratings.each(&block)
   end
 end
